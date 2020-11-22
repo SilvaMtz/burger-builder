@@ -27,6 +27,7 @@ class BurgerBuilder extends Component {
   }
 
   componentDidMount () {
+    console.log(this.props)
     axiosOrders.get('https://react-burger-builder-73765.firebaseio.com/ingredients.json')
       .then(response => {
         this.setState( { ingredients: response.data } )
@@ -88,30 +89,39 @@ class BurgerBuilder extends Component {
   }
 
   purchaseContinueHandler = () => {
-    this.setState( { isLoading: true } );
-    // always make any sort of calculations (like the price) in the backend.
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: 'David Martinez',
-        address: {
-          street: 'Av. Street',
-          zipCode: '32786',
-          country: 'Mexico'
-        },
-        email: 'david@email.com'
-      },
-      deliveryMethod: 'fastest'
-    };
+    // this.setState( { isLoading: true } );
+    // // always make any sort of calculations (like the price) in the backend.
+    // const order = {
+    //   ingredients: this.state.ingredients,
+    //   price: this.state.totalPrice,
+    //   customer: {
+    //     name: 'David Martinez',
+    //     address: {
+    //       street: 'Av. Street',
+    //       zipCode: '32786',
+    //       country: 'Mexico'
+    //     },
+    //     email: 'david@email.com'
+    //   },
+    //   deliveryMethod: 'fastest'
+    // };
 
-    axiosOrders.post('https://react-burger-builder-73765.firebaseio.com/orders', order)
-      .then((response) => {
-        this.setState( { isLoading: false, purchasing: false } );
-      })
-      .catch(error => {
-        this.setState( { isLoading: false, purchasing: false } )
-      });
+    // axiosOrders.post('https://react-burger-builder-73765.firebaseio.com/orders.json', order)
+    //   .then((response) => {
+    //     this.setState( { isLoading: false, purchasing: false } );
+    //   })
+    //   .catch(error => {
+    //     this.setState( { isLoading: false, purchasing: false } )
+    //   });
+    const queryParams = [];
+    for (let i in this.state.ingredients) {
+      queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
+    }
+    const queryString = queryParams.join('&');
+    this.props.history.push({
+      pathname: '/checkout',
+      search: '?' + queryString
+    });
   }
 
   render() {
