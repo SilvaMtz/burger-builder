@@ -5,13 +5,25 @@ const input = (props) => {
 
   let inputElement = null;
 
-  switch (props.inputtype) {
+  switch (props.elemetType) {
     case('input'):
-      inputElement = <input className={[classes.InputElement, classes.Input].join(' ')} {...props} />
+      inputElement = <input
+        className={[classes.InputElement, classes.Input].join(' ')}
+        {...props.elementConfig}
+        value={props.value}
+      />
     case ('textarea'):
-      inputElement = <textarea className={[classes.InputElement, classes.Textarea].join(' ')} {...props} />
+      inputElement = <textarea
+        className={[classes.InputElement, classes.Textarea].join(' ')}
+        {...props.elementConfig}
+        value={props.value}
+      />
     default:
-      inputElement = <input className={[classes.InputElement, classes.Input].join(' ')} {...props} />
+      inputElement = <input
+        className={[classes.InputElement, classes.Input].join(' ')}
+        {...props.elementConfig}
+        value={props.value}
+      />
   }
 
   return (
