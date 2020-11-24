@@ -1,0 +1,41 @@
+.InputContainer {
+  padding: 8px 16px;
+}
+
+.InputElement {
+  background-color: #eee;
+  outline: none;
+  font: inherit;
+  border: 1px solid #4444;
+  border-radius: 5px;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  &.Input {
+    height: 36px;
+    padding: 0 16px;
+  }
+  &.Textarea {
+    height: 62px;
+    padding: 8px 16px;
+  }
+}
+
+.InputElement:focus {
+  border-bottom: 2px solid #40A4C8;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+
+}
+
+.Label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+  text-align: start;
+  font-size: 12px;
+}
+
+
+
