@@ -12,7 +12,8 @@ class ContactData extends Component {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: 'Your name'
+          placeholder: 'Your name',
+          label: 'Name'
         },
         value: ''
       },
@@ -20,7 +21,8 @@ class ContactData extends Component {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: 'Your street'
+          placeholder: 'Your street',
+          label: 'Street'
         },
         value: ''
       },
@@ -28,7 +30,8 @@ class ContactData extends Component {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: 'You Zip Code'
+          placeholder: 'You Zip Code',
+          label: 'Zip Code'
         },
         value: ''
       },
@@ -36,7 +39,8 @@ class ContactData extends Component {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: 'Where are you from?'
+          placeholder: 'Where are you from?',
+          label: 'Nationality'
         },
         value: ''
       },
@@ -44,18 +48,21 @@ class ContactData extends Component {
         elementType: 'input',
         elementConfig: {
           type: 'email',
-          placeholder: 'Your email'
+          placeholder: 'Your email',
+          label: 'Email'
         },
         value: ''
-      }
-    },
-    deliveryMethod: {
-      elementType: 'select',
-      elementconfig: {
-        options: [
-          {value: 'fastest', displayValue: 'Fastest'},
-          {value: 'economy', displayValue: 'Economy'},
-        ]
+      },
+      deliveryMethod: {
+        elementType: 'select',
+        elementConfig: {
+          label: 'Delivery Method',
+          options: [
+            {value: 'fastest', displayValue: 'Fastest'},
+            {value: 'economy', displayValue: 'Economy'},
+          ]
+        },
+        value: ''
       }
     },
     isLoading: false
@@ -90,16 +97,41 @@ class ContactData extends Component {
       });
   }
 
+  inputChangeHandler = (event, inputId) => {
+    const updatedOrderForm = {
+      ...this.state.orderForm
+    }
+    const updatedFormElement = {
+      ...updatedOrderForm[inputId]
+    }
+    updatedFormElement.value = event.target.value;
+    updatedOrderForm[inputId] = updatedFormElement;
+    this.setState( { orderForm: updatedOrderForm } );
+  }
+
   render () {
+    const formElementsArray = [];
+    for (let key in this.state.orderForm) {
+      formElementsArray.push({
+        id: key,
+        config: this.state.orderForm[key]
+      });
+    };
+
     let form = (
       <React.Fragment>
         <h4>Enter your Contact Data</h4>
         <form className={classes.ContactForm}>
-          <Input label="Name" elementType="..." elementConfig="..." value="..." />
-          <Input label="Email" inputtype="input" type="text" name="email" placeholder="example@mail.com" />
-          <Input label="Street" inputtype="input" type="text" name="street" placeholder="Street Av." />
-          <Input label="Zip Code" inputtype="input" type="text" name="zip" placeholder="12345" />
-
+          {formElementsArray.map(formElement => (
+            <Input
+              key={formElement.id}
+              elementType={formElement.config.elementType}
+              elementConfig={formElement.config.elementConfig}
+              value={formElement.config.value}
+              label={formElement.config.elementConfig.label}
+              onChange={(event) => this.inputChangeHandler(event, formElement.id)}
+            />
+          ))}
           <Button buttonType="Success" onClick={this.orderHandler}>PLACE ORDER</Button>
         </form>
       </React.Fragment>
