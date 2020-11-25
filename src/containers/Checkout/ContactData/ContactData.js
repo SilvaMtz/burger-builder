@@ -1,149 +1,222 @@
-import React, { Component } from 'react';
-import Button from '../../../components/UI/Button/Button';
-import classes from './ContactData.module.scss';
-import axiosOrders from '../../../axios-orders';
-import Spinner from '../../../components/UI/Spinner/Spinner';
-import Input from '../../../components/UI/Input/Input';
+import React, { Component } from "react";
+import Button from "../../../components/UI/Button/Button";
+import classes from "./ContactData.module.scss";
+import axiosOrders from "../../../axios-orders";
+import Spinner from "../../../components/UI/Spinner/Spinner";
+import Input from "../../../components/UI/Input/Input";
 
 class ContactData extends Component {
   state = {
     orderForm: {
       name: {
-        elementType: 'input',
+        elementType: "input",
         elementConfig: {
-          type: 'text',
-          placeholder: 'Your name',
-          label: 'Name'
+          type: "text",
+          placeholder: "Your name",
+          label: "Name",
         },
-        value: ''
+        value: "",
+        validation: {
+          required: true,
+          minLength: 2,
+          maxLength: 50,
+        },
+        valid: false,
+        isTouched: false,
       },
       street: {
-        elementType: 'input',
+        elementType: "input",
         elementConfig: {
-          type: 'text',
-          placeholder: 'Your street',
-          label: 'Street'
+          type: "text",
+          placeholder: "Your street",
+          label: "Street",
         },
-        value: ''
+        value: "",
+        validation: {
+          required: true,
+          minLength: 2,
+          maxLength: 50,
+        },
+        valid: false,
+        isTouched: false,
       },
       zipCode: {
-        elementType: 'input',
+        elementType: "input",
         elementConfig: {
-          type: 'text',
-          placeholder: 'You Zip Code',
-          label: 'Zip Code'
+          type: "text",
+          placeholder: "You Zip Code",
+          label: "Zip Code",
         },
-        value: ''
+        value: "",
+        validation: {
+          required: true,
+          minLength: 5,
+          maxLength: 5,
+        },
+        valid: false,
+        isTouched: false,
       },
       country: {
-        elementType: 'input',
+        elementType: "input",
         elementConfig: {
-          type: 'text',
-          placeholder: 'Where are you from?',
-          label: 'Nationality'
+          type: "text",
+          placeholder: "Where are you from?",
+          label: "Nationality",
         },
-        value: ''
+        value: "",
+        validation: {
+          required: true,
+          minLength: 2,
+          maxLength: 50,
+        },
+        valid: false,
+        isTouched: false,
       },
       email: {
-        elementType: 'input',
+        elementType: "input",
         elementConfig: {
-          type: 'email',
-          placeholder: 'Your email',
-          label: 'Email'
+          type: "email",
+          placeholder: "Your email",
+          label: "Email",
         },
-        value: ''
+        value: "",
+        validation: {
+          required: true,
+          minLength: 2,
+          maxLength: 50,
+        },
+        valid: false,
+        isTouched: false,
       },
       deliveryMethod: {
-        elementType: 'select',
+        elementType: "select",
         elementConfig: {
-          label: 'Delivery Method',
+          label: "Delivery Method",
           options: [
-            {value: 'fastest', displayValue: 'Fastest'},
-            {value: 'economy', displayValue: 'Economy'},
-          ]
+            { value: "fastest", displayValue: "Fastest" },
+            { value: "economy", displayValue: "Economy" },
+          ],
         },
-        value: ''
-      }
+        value: "",
+        valid: true
+      },
     },
-    isLoading: false
-  }
+    formIsValid: false,
+    isLoading: false,
+  };
 
   orderHandler = (event) => {
     event.preventDefault();
-    this.setState( { isLoading: true } );
-    // always make any sort of calculations (like the price) in the backend.
+    this.setState({ isLoading: true });
+    const formData = {};
+    for (let formElementId in this.state.orderForm) {
+      formData[formElementId] = this.state.orderForm[formElementId].value;
+    }
     const order = {
       ingredients: this.props.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: 'David Martinez',
-        address: {
-          street: 'Av. Street',
-          zipCode: '32786',
-          country: 'Mexico'
-        },
-        email: 'david@email.com'
-      },
-      deliveryMethod: 'fastest'
+      price: this.props.totalPrice,
+      orderData: formData,
     };
 
-    axiosOrders.post('https://react-burger-builder-73765.firebaseio.com/orders.json', order)
+    axiosOrders
+      .post(
+        "https://react-burger-builder-73765.firebaseio.com/orders.json",
+        order
+      )
       .then((response) => {
-        this.setState( { isLoading: false } );
-        this.props.history.push('/');
+        this.setState({ isLoading: false });
+        this.props.history.push("/");
       })
-      .catch(error => {
-        this.setState( { isLoading: false } )
+      .catch((error) => {
+        this.setState({ isLoading: false });
       });
+  };
+
+  formIsValid(value, rules) {
+    let isValid = true;
+
+    if (rules.required) {
+      isValid = value.trim() !== "" && isValid;
+    }
+
+    if (rules.minLength) {
+      isValid = value.length >= rules.minLength && isValid;
+    }
+
+    if (rules.maxLength) {
+      isValid = value.length <= rules.maxLength && isValid;
+    }
+
+    return isValid;
   }
 
   inputChangeHandler = (event, inputId) => {
     const updatedOrderForm = {
-      ...this.state.orderForm
-    }
+      ...this.state.orderForm,
+    };
     const updatedFormElement = {
-      ...updatedOrderForm[inputId]
-    }
+      ...updatedOrderForm[inputId],
+    };
     updatedFormElement.value = event.target.value;
+    updatedFormElement.valid = this.formIsValid(
+      updatedFormElement.value,
+      updatedFormElement.validation
+    );
+    updatedFormElement.isTouched = true;
     updatedOrderForm[inputId] = updatedFormElement;
-    this.setState( { orderForm: updatedOrderForm } );
-  }
 
-  render () {
+    let formIsValid = true;
+    for (let inputIdentifier in updatedOrderForm) {
+      formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
+    }
+    this.setState({
+      orderForm: updatedOrderForm,
+      formIsValid: formIsValid,
+    });
+  };
+
+  render() {
     const formElementsArray = [];
     for (let key in this.state.orderForm) {
       formElementsArray.push({
         id: key,
-        config: this.state.orderForm[key]
+        config: this.state.orderForm[key],
       });
-    };
+    }
 
     let form = (
       <React.Fragment>
         <h4>Enter your Contact Data</h4>
         <form className={classes.ContactForm}>
-          {formElementsArray.map(formElement => (
+          {formElementsArray.map((formElement) => (
             <Input
               key={formElement.id}
               elementType={formElement.config.elementType}
               elementConfig={formElement.config.elementConfig}
               value={formElement.config.value}
               label={formElement.config.elementConfig.label}
-              onChange={(event) => this.inputChangeHandler(event, formElement.id)}
+              maxLength={
+                formElement.config.validation &&
+                formElement.config.validation.maxLength
+              }
+              onChange={(event) =>
+                this.inputChangeHandler(event, formElement.id)
+              }
+              isInvalid={!formElement.config.valid}
+              shouldValidate={formElement.config.validation}
+              isTouched={formElement.config.isTouched}
             />
           ))}
-          <Button buttonType="Success" onClick={this.orderHandler}>PLACE ORDER</Button>
+          <Button disabled={!this.state.formIsValid} buttonType="Success" onClick={this.orderHandler}>
+            PLACE ORDER
+          </Button>
         </form>
       </React.Fragment>
-    )
+    );
     if (this.state.isLoading) {
       form = <Spinner />;
     }
-    return (
-      <div className={classes.ContactData}>
-        {form}
-      </div>
-    );
+    return <div className={classes.ContactData}>{form}</div>;
   }
 }
 

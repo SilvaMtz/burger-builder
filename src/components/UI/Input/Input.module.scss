@@ -26,13 +26,6 @@
   }
 }
 
-.InputElement:focus {
-  border-bottom: 2px solid #40A4C8;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
-
-}
-
 .Label {
   font-weight: 500;
   display: block;
@@ -41,5 +34,22 @@
   font-size: 12px;
 }
 
+.CharCount {
+  font-size: 10px;
+  color: rgb(88, 88, 88);
+  text-align: right;
+  display: block;
+}
 
+.InputElement:focus {
+  border-bottom: 2px solid #40A4C8;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
 
+.Invalid,
+.Invalid:focus {
+  border-bottom: 2px solid #c84040;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}

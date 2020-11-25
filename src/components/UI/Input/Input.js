@@ -4,28 +4,35 @@ import React from 'react';
 const input = (props) => {
 
   let inputElement = null;
+  let inputClasses = [classes.InputElement];
+  if (props.isInvalid && props.shouldValidate && props.isTouched) {
+    inputClasses.push(classes.Invalid);
+  }
 
   switch (props.elementType) {
     case ('input'):
+      inputClasses.push(classes.Input);
       inputElement = <input
-        className={[classes.InputElement, classes.Input].join(' ')}
+        className={inputClasses.join(' ')}
         {...props.elementConfig}
         value={props.value}
         onChange={props.onChange}
       />
       break;
     case ('textarea'):
+      inputClasses.push(classes.Textarea);
       inputElement = <textarea
-        className={[classes.InputElement, classes.Textarea].join(' ')}
+        className={inputClasses.join(' ')}
         {...props.elementConfig}
         value={props.value}
         onChange={props.onChange}
       />
       break;
     case ('select'):
+      inputClasses.push(classes.Select);
       inputElement = (
         <select
-          className={[classes.InputElement, classes.Select].join(' ')}
+          className={inputClasses.join(' ')}
           value={props.value}
           onChange={props.onChange}
         >
@@ -38,13 +45,19 @@ const input = (props) => {
       )
       break;
     default:
+      inputClasses.push(classes.Input);
       inputElement = <input
-        className={[classes.InputElement, classes.Input].join(' ')}
+        className={inputClasses.join(' ')}
         {...props.elementConfig}
         value={props.value}
         onChange={props.onChange}
       />
       break;
+  }
+
+  let characterCounter = null
+  if (props.maxLength) {
+    characterCounter = <label className={classes.CharCount}>{props.value.length}/{props.maxLength}</label>
   }
 
   return (
@@ -53,6 +66,7 @@ const input = (props) => {
         {props.label}
       </label>
       {inputElement}
+      {characterCounter}
     </div>
   );
 };
