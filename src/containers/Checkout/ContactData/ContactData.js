@@ -15,7 +15,7 @@ class ContactData extends Component {
           placeholder: "Your name",
           label: "Name",
         },
-        value: "",
+        value: '',
         validation: {
           required: true,
           minLength: 2,
@@ -31,7 +31,7 @@ class ContactData extends Component {
           placeholder: "Your street",
           label: "Street",
         },
-        value: "",
+        value: '',
         validation: {
           required: true,
           minLength: 2,
@@ -47,7 +47,7 @@ class ContactData extends Component {
           placeholder: "You Zip Code",
           label: "Zip Code",
         },
-        value: "",
+        value: '',
         validation: {
           required: true,
           minLength: 5,
@@ -61,13 +61,13 @@ class ContactData extends Component {
         elementConfig: {
           type: "text",
           placeholder: "Where are you from?",
-          label: "Nationality",
+          label: "Country",
         },
-        value: "",
+        value: '',
         validation: {
           required: true,
           minLength: 2,
-          maxLength: 50,
+          maxLength: 56,
         },
         valid: false,
         isTouched: false,
@@ -79,7 +79,7 @@ class ContactData extends Component {
           placeholder: "Your email",
           label: "Email",
         },
-        value: "",
+        value: '',
         validation: {
           required: true,
           minLength: 2,
@@ -93,11 +93,12 @@ class ContactData extends Component {
         elementConfig: {
           label: "Delivery Method",
           options: [
-            { value: "fastest", displayValue: "Fastest" },
+            { value: "express", displayValue: "Express (fastest)" },
             { value: "economy", displayValue: "Economy" },
           ],
         },
-        value: "",
+        value: 'express',
+        validation: {},
         valid: true
       },
     },
@@ -132,8 +133,11 @@ class ContactData extends Component {
       });
   };
 
-  formIsValid(value, rules) {
+  fieldIsValid(value, rules) {
     let isValid = true;
+    if (!rules) {
+      return isValid;
+    }
 
     if (rules.required) {
       isValid = value.trim() !== "" && isValid;
@@ -158,7 +162,7 @@ class ContactData extends Component {
       ...updatedOrderForm[inputId],
     };
     updatedFormElement.value = event.target.value;
-    updatedFormElement.valid = this.formIsValid(
+    updatedFormElement.valid = this.fieldIsValid(
       updatedFormElement.value,
       updatedFormElement.validation
     );
