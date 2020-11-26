@@ -4,6 +4,7 @@ import classes from "./ContactData.module.scss";
 import axiosOrders from "../../../axios-orders";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
+import { connect } from "react-redux";
 
 class ContactData extends Component {
   state = {
@@ -15,7 +16,7 @@ class ContactData extends Component {
           placeholder: "Your name",
           label: "Name",
         },
-        value: '',
+        value: "",
         validation: {
           required: true,
           minLength: 2,
@@ -31,7 +32,7 @@ class ContactData extends Component {
           placeholder: "Your street",
           label: "Street",
         },
-        value: '',
+        value: "",
         validation: {
           required: true,
           minLength: 2,
@@ -47,7 +48,7 @@ class ContactData extends Component {
           placeholder: "You Zip Code",
           label: "Zip Code",
         },
-        value: '',
+        value: "",
         validation: {
           required: true,
           minLength: 5,
@@ -63,7 +64,7 @@ class ContactData extends Component {
           placeholder: "Where are you from?",
           label: "Country",
         },
-        value: '',
+        value: "",
         validation: {
           required: true,
           minLength: 2,
@@ -79,7 +80,7 @@ class ContactData extends Component {
           placeholder: "Your email",
           label: "Email",
         },
-        value: '',
+        value: "",
         validation: {
           required: true,
           minLength: 2,
@@ -97,9 +98,9 @@ class ContactData extends Component {
             { value: "economy", displayValue: "Economy" },
           ],
         },
-        value: 'express',
+        value: "express",
         validation: {},
-        valid: true
+        valid: true,
       },
     },
     formIsValid: false,
@@ -114,8 +115,8 @@ class ContactData extends Component {
       formData[formElementId] = this.state.orderForm[formElementId].value;
     }
     const order = {
-      ingredients: this.props.ingredients,
-      price: this.props.totalPrice,
+      ingredients: this.props.ings,
+      price: this.props.price,
       orderData: formData,
     };
 
@@ -211,7 +212,11 @@ class ContactData extends Component {
               isTouched={formElement.config.isTouched}
             />
           ))}
-          <Button disabled={!this.state.formIsValid} buttonType="Success" onClick={this.orderHandler}>
+          <Button
+            disabled={!this.state.formIsValid}
+            buttonType="Success"
+            onClick={this.orderHandler}
+          >
             PLACE ORDER
           </Button>
         </form>
@@ -224,4 +229,11 @@ class ContactData extends Component {
   }
 }
 
-export default ContactData;
+const mapStateToProps = (state) => {
+  return {
+    ings: state.ingredients,
+    price: state.totalPrice,
+  };
+};
+
+export default connect(mapStateToProps)(ContactData);
