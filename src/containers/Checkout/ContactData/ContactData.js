@@ -5,6 +5,8 @@ import axiosOrders from "../../../axios-orders";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
 import { connect } from "react-redux";
+import withErrorHandler from "../../../hoc/withErrorHandler/withErrorHandler";
+import * as actions from "../../../store/actions/index";
 
 class ContactData extends Component {
   state = {
@@ -104,12 +106,10 @@ class ContactData extends Component {
       },
     },
     formIsValid: false,
-    isLoading: false,
   };
 
   orderHandler = (event) => {
     event.preventDefault();
-    this.setState({ isLoading: true });
     const formData = {};
     for (let formElementId in this.state.orderForm) {
       formData[formElementId] = this.state.orderForm[formElementId].value;
@@ -120,18 +120,7 @@ class ContactData extends Component {
       orderData: formData,
     };
 
-    axiosOrders
-      .post(
-        "https://react-burger-builder-73765.firebaseio.com/orders.json",
-        order
-      )
-      .then((response) => {
-        this.setState({ isLoading: false });
-        this.props.history.push("/");
-      })
-      .catch((error) => {
-        this.setState({ isLoading: false });
-      });
+    this.props.onOrderBurger(order);
   };
 
   fieldIsValid(value, rules) {
@@ -222,7 +211,7 @@ class ContactData extends Component {
         </form>
       </React.Fragment>
     );
-    if (this.state.isLoading) {
+    if (this.props.loading) {
       form = <Spinner />;
     }
     return <div className={classes.ContactData}>{form}</div>;
@@ -233,7 +222,18 @@ const mapStateToProps = (state) => {
   return {
     ings: state.ingredients,
     price: state.totalPrice,
+    loading: state.isLoading
   };
 };
 
-export default connect(mapStateToProps)(ContactData);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onOrderBurger: (orderData) =>
+      dispatchEvent(actions.purchaseBurger(orderData)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withErrorHandler(ContactData, axiosOrders));
